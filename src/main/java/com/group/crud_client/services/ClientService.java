@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -46,6 +47,13 @@ public class ClientService {
         saveDTOtoEntity(dto, entity);
         entity = repository.save(entity);
         return new ClientDTO(entity);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+        Optional<Client> result = repository.findById(id);
+        Client client = result.get();
+        repository.delete(client);
     }
 
     private void saveDTOtoEntity(ClientDTO dto, Client entity) {
